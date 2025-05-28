@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ant Colony Visualization</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #plot { width: 800px; height: 600px; margin-bottom: 20px; }
+        label { margin-right: 10px; }
+        input { margin-right: 20px; }
+        button { padding: 5px 15px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Ant Colony Optimization Visualization</h1>
+    <div>
+        <label>Cities (n): <input type="number" id="n" value="10" min="3" max="50"></label>
+        <label>Ants: <input type="number" id="ants" value="10" min="1" max="100"></label>
+        <label>Iterations: <input type="number" id="iterations" value="100" min="1" max="1000"></label>
+        <label>Decay: <input type="number" step="0.01" id="decay" value="0.1" min="0" max="1"></label>
+        <button onclick="runAlgorithm()">Run</button>
+    </div>
+
+    <div id="plot"></div>
+    <div id="result"></div>
+
+    <script>
+        function runAlgorithm() {
+            const n = document.getElementById('n').value;
+            const ants = document.getElementById('ants').value;
+            const iterations = document.getElementById('iterations').value;
+            const decay = document.getElementById('decay').value;
+
+            fetch(`/run?n=${n}&ants=${ants}&iterations=${iterations}&decay=${decay}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.error){
+                        alert("Error: " + data.error);
+                        return;
+                    }
+                    drawPlot(data.city_coordinates, data.best_path);
+                    document.getElementById('result').innerHTML = `<h3>Best distance: ${data.best_distance}</h3>`;
+                });
+        }
+
+        function drawPlot(cities, path) {
+            const city_x = cities.map(c => c.x);
+            const city_y = cities.map(c => c.y);
+
+            const path_x = path.map(i => cities[i].x);
+            const path_y = path.map(i => cities[i].y);
+            // close the loop
+            path_x.push(cities[path[0]].x);
+            path_y.push(cities[path[0]].y);
+
+            const city_trace = {
+                x: city_x,
+                y: city_y,
+                mode: 'markers+text',
+                type: 'scatter',
+                name: 'Cities',
+                text: city_x.map((_,i) => i),
+                textposition: 'top center',
+                marker: { size: 10, color: 'red' }
+            };
+
+            const path_trace = {
+                x: path_x,
+                y: path_y,
+                mode: 'lines+markers',
+                type: 'scatter',
+                name: 'Best path',
+                line: { color: 'blue' },
+                marker: { size: 8 }
+            };
+
+            const layout = {
+                title: 'Ant Colony Optimization',
+                xaxis: { title: 'X' },
+                yaxis: { title: 'Y' },
+                showlegend: true,
+                hovermode: 'closest'
+            };
+
+            Plotly.newPlot('plot', [city_trace, path_trace], layout);
+        }
+    </script>
+</body>
+</html>

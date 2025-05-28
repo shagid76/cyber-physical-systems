@@ -21,7 +21,6 @@ class TestLorenzSystem(unittest.TestCase):
                         "Final values of the solution should be within a reasonable range.")
 
     def test_nonzero_solution(self):
-        # Ensure that the solution is evolving by checking that the last value is different from the initial one.
         initial_values = sol.y[:, 0]
         final_values = sol.y[:, -1]
         self.assertFalse(np.allclose(initial_values, final_values),

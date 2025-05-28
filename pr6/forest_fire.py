@@ -4,9 +4,9 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from matplotlib import animation
 
-EMPTY = 0  # згоріла
-TREE = 1   # незаймана
-BURNING = 2  # горить
+EMPTY = 0
+TREE = 1
+BURNING = 2
 
 colors = {
     EMPTY: (0.2, 0.2, 0.2),
@@ -42,7 +42,7 @@ def update_forest(forest, burning_time, P_burn, T_burn):
     return new_forest, new_burning_time
 
 def visualize_simulation(size=50, steps=100, P_burn=0.3, T_burn=3):
-    fire_spots = [(size // 2, size // 2)]  # Центр загорівся
+    fire_spots = [(size // 2, size // 2)]
     forest, burning_time = create_forest(size, fire_spots)
 
     fig = plt.figure(figsize=(6, 6))
@@ -62,4 +62,4 @@ def visualize_simulation(size=50, steps=100, P_burn=0.3, T_burn=3):
     plt.axis('off')
     plt.show()
 
-visualize_simulation(size=50, steps=100, P_burn=0.4, T_burn=4)
+visualize_simulation(size=50, steps=100, P_burn=0.8, T_burn=4)
